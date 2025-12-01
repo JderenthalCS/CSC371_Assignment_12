@@ -123,11 +123,13 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
 
 
         val pOffset by animateIntOffsetAsState(
-            targetValue = when (isPlaying) {
-                true -> IntOffset(130, 300)
-                false -> IntOffset(130, 100)
+            targetValue = if (isPlaying) {
+                IntOffset(130, 300)
+            }else{
+                IntOffset(130, 100)
             },
-            animationSpec = tween(3000, easing = LinearEasing)
+            animationSpec = tween(3000, easing = LinearEasing),
+            label = "rectOffset"
         )
         val rectRotation by animateFloatAsState(
             targetValue = if (isPlaying) 360f else 0f,
