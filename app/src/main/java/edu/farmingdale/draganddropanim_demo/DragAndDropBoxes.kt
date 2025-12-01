@@ -129,7 +129,6 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             },
             animationSpec = tween(3000, easing = LinearEasing)
         )
-
         val rectRotation by animateFloatAsState(
             targetValue = if (isPlaying) 360f else 0f,
             animationSpec = tween(
