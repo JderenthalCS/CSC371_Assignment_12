@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
 
 
 //private val rotation = FloatPropKey()
@@ -61,6 +62,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
     var isPlaying by remember { mutableStateOf(true) }
+    var targetOffset by remember { mutableStateOf(IntOffset(300, 300)) }
     Column(modifier = Modifier.fillMaxSize()) {
 
         Row(
@@ -91,6 +93,13 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
                                         isPlaying = !isPlaying
                                         dragBoxIndex = index
+
+                                        targetOffset = if (isPlaying){
+                                            IntOffset(300,280)
+                                        } else {
+                                            IntOffset(60,120)
+                                        }
+
                                         return true
                                     }
                                 }
@@ -121,23 +130,31 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             }
         }
 
+        Button(
+            onClick = {
+                targetOffset = IntOffset(150, 180)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text(text = "Reset to Center")
+        }
 
         val pOffset by animateIntOffsetAsState(
-            targetValue = if (isPlaying) {
-                IntOffset(130, 300)
-            }else{
-                IntOffset(130, 100)
-            },
+            targetValue = targetOffset,
             animationSpec = tween(3000, easing = LinearEasing),
             label = "rectOffset"
         )
+
+
         val rectRotation by animateFloatAsState(
             targetValue = if (isPlaying) 360f else 0f,
             animationSpec = tween(
                 durationMillis = 3000,
                 easing = LinearEasing
             ),
-            label = "rectRotation"
+            label = "rectOffset"
         )
 
         Box(
