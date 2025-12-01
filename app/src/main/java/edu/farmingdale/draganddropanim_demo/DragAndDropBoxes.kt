@@ -91,17 +91,42 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                             target = remember {
                                 object : DragAndDropTarget {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                                        isPlaying = !isPlaying
                                         dragBoxIndex = index
 
-                                        targetOffset = if (isPlaying){
-                                            IntOffset(300,280)
-                                        } else {
-                                            IntOffset(60,120)
+                                        // Always spin when a command is dropped
+                                        isPlaying = true
+
+                                        targetOffset = when (index) {
+                                            // UP
+                                            0 -> {
+                                                targetOffset.copy(
+                                                    y = (targetOffset.y - 80).coerceAtLeast(0)
+                                                )
+                                            }
+                                            // DOWN
+                                            1 -> {
+                                                targetOffset.copy(
+                                                    y = targetOffset.y + 80
+                                                )
+                                            }
+                                            // LEFT
+                                            2 -> {
+                                                targetOffset.copy(
+                                                    x = (targetOffset.x - 80).coerceAtLeast(0)
+                                                )
+                                            }
+                                            3 -> {
+                                                // RIGHT
+                                                targetOffset.copy(
+                                                    x = targetOffset.x + 80
+                                                )
+                                            }
+                                            else -> targetOffset
                                         }
 
                                         return true
                                     }
+
                                 }
                             }
                         ),
