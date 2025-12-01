@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -52,8 +53,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+
+
+
 import androidx.compose.material3.Button
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 //private val rotation = FloatPropKey()
@@ -61,8 +69,8 @@ import androidx.compose.material3.Button
 
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
-    var isPlaying by remember { mutableStateOf(true) }
-    var targetOffset by remember { mutableStateOf(IntOffset(300, 300)) }
+    var isPlaying by remember { mutableStateOf(false) }
+    var targetOffset by remember { mutableStateOf(IntOffset(0, 0)) }
     Column(modifier = Modifier.fillMaxSize()) {
 
         Row(
@@ -76,6 +84,24 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             }
 
             repeat(boxCount) { index ->
+
+                val arrowIcon = when (index) {
+                    0 -> Icons.Filled.KeyboardArrowUp
+                    1 -> Icons.Filled.KeyboardArrowDown
+                    2 -> Icons.Filled.KeyboardArrowLeft
+                    3 -> Icons.Filled.KeyboardArrowRight
+                    else -> Icons.Filled.KeyboardArrowRight
+                }
+
+
+                val arrowDescription = when (index) {
+                    0 -> "Move Up"
+                    1 -> "Move Down"
+                    2 -> "Move Left"
+                    3 -> "Move Right"
+                    else -> "Command"
+                }
+
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -83,24 +109,20 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         .padding(10.dp)
                         .border(1.dp, Color.Black)
                         .dragAndDropTarget(
-                            shouldStartDragAndDrop = { event ->
-                                event
-                                    .mimeTypes()
-                                    .contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
-                            },
+                            shouldStartDragAndDrop = { true },
                             target = remember {
                                 object : DragAndDropTarget {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
                                         dragBoxIndex = index
 
                                         // Always spin when a command is dropped
-                                        isPlaying = true
+                                        isPlaying = !isPlaying
 
                                         targetOffset = when (index) {
                                             // UP
                                             0 -> {
                                                 targetOffset.copy(
-                                                    y = (targetOffset.y - 80).coerceAtLeast(0)
+                                                    y = (targetOffset.y - 80)
                                                 )
                                             }
                                             // DOWN
@@ -112,7 +134,7 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                                             // LEFT
                                             2 -> {
                                                 targetOffset.copy(
-                                                    x = (targetOffset.x - 80).coerceAtLeast(0)
+                                                    x = (targetOffset.x - 80)
                                                 )
                                             }
                                             // RIGHT
@@ -133,8 +155,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowForward,
-                        contentDescription = "Right command",
+                        imageVector = arrowIcon,
+                        contentDescription = arrowDescription,
                         tint = Color.Red,
                         modifier = Modifier
                             .fillMaxSize()
@@ -157,7 +179,7 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                targetOffset = IntOffset(150, 180)
+                targetOffset = IntOffset(0, 0)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -176,7 +198,7 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         val rectRotation by animateFloatAsState(
             targetValue = if (isPlaying) 360f else 0f,
             animationSpec = tween(
-                durationMillis = 3000,
+                durationMillis = 600,
                 easing = LinearEasing
             ),
             label = "rectOffset"
@@ -190,13 +212,14 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         ) {
             Box(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .size(80.dp)
+                    .align(Alignment.Center)
                     .offset(pOffset.x.dp, pOffset.y.dp)
-                    .size(80.dp) // rectangle size
                     .background(Color.Yellow)
                     .rotate(rectRotation)
             )
         }
+
     }
 }
 
