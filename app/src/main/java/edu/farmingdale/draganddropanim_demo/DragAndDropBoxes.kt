@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
@@ -51,6 +52,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.filled.ArrowForward
+
 
 //private val rotation = FloatPropKey()
 
@@ -95,35 +98,25 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    this@Row.AnimatedVisibility(
-                        visible = index == dragBoxIndex,
-                        enter = scaleIn() + fadeIn(),
-                        exit = scaleOut() + fadeOut()
-                    ) {
-                        Text(
-                            text = "Right",
-                            fontSize = 40.sp,
-                            color = Color.Red,
-                            fontWeight = FontWeight.Bold,
-
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .dragAndDropSource {
-                                    detectTapGestures(
-                                        onLongPress = { offset ->
-                                            startTransfer(
-                                                transferData = DragAndDropTransferData(
-                                                    clipData = ClipData.newPlainText(
-                                                        "text",
-                                                        ""
-                                                    )
-                                                )
+                    Icon(
+                        imageVector = Icons.Filled.ArrowForward,
+                        contentDescription = "Right command",
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .dragAndDropSource {
+                                detectTapGestures(
+                                    onLongPress = {
+                                        startTransfer(
+                                            transferData = DragAndDropTransferData(
+                                                clipData = ClipData.newPlainText("text", "")
                                             )
-                                        }
-                                    )
-                                }
-                        )
-                    }
+                                        )
+                                    }
+                                )
+                            }
+                    )
+
                 }
             }
         }
@@ -137,28 +130,28 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             animationSpec = tween(3000, easing = LinearEasing)
         )
 
-        val rtatView by animateFloatAsState(
-            targetValue = if (isPlaying) 360f else 0.0f,
-            // Configure the animation duration and easing.
-            animationSpec = repeatable(
-                iterations = if (isPlaying) 10 else 1,
-                tween(durationMillis = 3000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            )
+        val rectRotation by animateFloatAsState(
+            targetValue = if (isPlaying) 360f else 0f,
+            animationSpec = tween(
+                durationMillis = 3000,
+                easing = LinearEasing
+            ),
+            label = "rectRotation"
         )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.8f)
                 .background(Color.Red)
         ) {
-            Icon(
-                imageVector = Icons.Default.Face,
-                contentDescription = "Face",
+            Box(
                 modifier = Modifier
                     .padding(10.dp)
                     .offset(pOffset.x.dp, pOffset.y.dp)
-                    .rotate(rtatView)
+                    .size(80.dp) // rectangle size
+                    .background(Color.Yellow)
+                    .rotate(rectRotation)
             )
         }
     }
