@@ -115,8 +115,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                                                     x = (targetOffset.x - 80).coerceAtLeast(0)
                                                 )
                                             }
+                                            // RIGHT
                                             3 -> {
-                                                // RIGHT
                                                 targetOffset.copy(
                                                     x = targetOffset.x + 80
                                                 )
